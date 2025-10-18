@@ -25,11 +25,14 @@ let mut nums: Vec<i32> = (1..50).collect::<Vec<i32>>();
 nums.shuffle(&mut rng);
 
 let _ = nums.choose(&mut rng);
-let newnumber:  = rng ;
+let newnumber  = rng ;
+let mainnumber = newnumber.to_String();
 //compare the rng with the guess and 
 match guess.cmp(rng){
 Ordering::Less => println!("Value too small"),
 Ordering::Greater => println!("Too big"),
 Ordering::Equal => println!("you win")
 }
+
+
 }
