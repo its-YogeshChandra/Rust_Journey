@@ -26,15 +26,19 @@ io::stdin().read_line(&mut switch).expect("failed to read line");
 
 //check for the switch what it is 
 if switch == "start"{
-  let (numone, numtwo, operation) = take_input()
+let Ok((_numone, _numtwo, _operation)) = take_input() else { todo!() };
+//call the second function 
+perform_operation(_numone, _numtwo, _operation);
 
 }
 
 
 
+
+
 }
 
-fn take_input() -> Option<(i32, i32, String)>{
+fn take_input() -> Result<(i32, i32, String), &'static str> {
 let mut _num1 = String::new();
 let mut _num2 = String::new();
 let mut operation= String::new();
@@ -57,16 +61,16 @@ io::stdin().read_line( &mut operation).expect("failed to read the number");
 let operation = String::from(operation);
 let opp : &str = &operation;
 if opparray.contains(&opp){
-Some((num_one, num_two, operation))
+Ok((num_one, num_two, operation))
 }
 else{
 println!("invalid operation");
-None
+Err("invalid operation")
 }
 
 }
 
-fn perform_operation(first: i32, second: i32, operation: String){
+fn perform_operation(_first: i32, _second: i32, _operation: String){
 
 }
 
