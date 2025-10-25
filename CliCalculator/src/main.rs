@@ -71,6 +71,8 @@ Err("invalid operation")
 }
 
 fn perform_operation(_first: i32, _second: i32, _operation: String){
+//check operation
+   //can use match or can use the loop method 
 
 }
 
