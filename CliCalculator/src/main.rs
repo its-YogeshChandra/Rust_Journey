@@ -32,11 +32,9 @@ perform_operation(_numone, _numtwo, _operation);
 
 }
 
-
-
-
-
 }
+
+
 
 fn take_input() -> Result<(i32, i32, String), &'static str> {
 let mut _num1 = String::new();
@@ -73,6 +71,16 @@ Err("invalid operation")
 fn perform_operation(_first: i32, _second: i32, _operation: String){
 //check operation
    //can use match or can use the loop method 
+struct User  {
+add : char,
+sub: char,
+mult: char,
+div: char,
+rem: char
+}
+
+//populating the struct 
+User.add = +;
 
 }
 
