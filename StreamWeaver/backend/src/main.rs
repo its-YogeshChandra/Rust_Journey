@@ -19,6 +19,14 @@ fn main() {
     }
 }
 
+//create request struct
+
+struct Request {
+    path: String,
+    method: String,
+    data: String,
+}
+
 fn handle_connection(mut stream: TcpStream) -> String {
     //creating buffer
     //Buffers in Rust: In Rust, a buffer is typically a block of memory used for temporary storage of data. Buffers are commonly used when reading or writing data to or from sources like files, network sockets, or memory
@@ -27,6 +35,18 @@ fn handle_connection(mut stream: TcpStream) -> String {
     stream.read(&mut buffer).unwrap();
 
     let get = b"GET / HTTP/1.1\r\n";
+
+    //read the buffer put and seperate different parts out of it
+
+    let request = String::from_utf8_lossy(&buffer[..]);
+
+    //print the request
+    println!("Request : {}", request);
+
+    //extract the values from the request
+    for part in request.split(" ") {
+        println! {"{}", part};
+    }
 
     if buffer.starts_with(get) {
         println!("inside the function");
