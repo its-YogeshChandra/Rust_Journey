@@ -14,14 +14,19 @@ fn main() {
     match listener {
         Ok(connection) => {
             println! {"connection successfully established"};
-            println! {"connection : {:?}", &connection};
+            // println! {"connection : {:?}", &connection};
 
             // loop and check the stream from listener
             for stream in connection.incoming() {
                 //error handling for stream
                 match stream {
-                    Ok(streamdata) => println! {
-                    " data stream is receiving : {:?}", streamdata},
+                    Ok(streamdata) => {
+                        println! {
+                        " data stream is receiving : {:?}", streamdata};
+
+                        //connect to the handling stream
+                        handle_connection(streamdata);
+                    }
                     Err(error) => {
                         eprint!("error while getting stream ");
                         eprint!("error: {}", error);
@@ -35,12 +40,23 @@ fn main() {
         }
     }
 }
+
 //create request struct
 
 struct Request {
-    path: String,
+    httpversion: String,
+    host: String,
+    route: String,
     method: String,
     data: String,
+}
+
+enum request_element {
+    HTTP,
+    GET,
+    POST,
+    PUT,
+    DELETE,
 }
 
 fn handle_connection(mut stream: TcpStream) -> String {
@@ -59,13 +75,30 @@ fn handle_connection(mut stream: TcpStream) -> String {
     //print the request
     println!("Request : {}", request);
 
+    //make instance of request and update the values
+    let mut request_data = Request {
+        data: String::from("random"),
+        httpversion: String::from("random"),
+        host: String::from("random"),
+        method: String::from("random"),
+        route: String::from("random"),
+    };
+
     //extract the values from the request
     for part in request.split(" ") {
+        println!("------printing parts ------");
         println! {"{}", part};
+        println!("------------");
+
+        //match the data and update the request_data object
+        match part {
+            request_element::HTTP => request_data.httpversion = String::from(&part),
+        }
     }
 
     if buffer.starts_with(get) {
         println!("inside the function");
+
         let mut file = File::open("hello.html").unwrap();
 
         let mut contents = String::new();
