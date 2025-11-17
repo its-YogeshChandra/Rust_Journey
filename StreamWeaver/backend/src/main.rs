@@ -7,18 +7,34 @@ use std::net::TcpStream;
 
 fn main() {
     //creating a simple webserver
-    let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
+    let listener = TcpListener::bind("127.0.0.1:8080");
     println!("Hello, world!");
 
-    for stream in listener.incoming() {
-        let _stream = stream.unwrap();
+    // error handling if error while handling error
+    match listener {
+        Ok(connection) => {
+            println! {"connection successfully established"};
+            println! {"connection : {:?}", &connection};
 
-        println!("connection established ! ");
-
-        handle_connection(_stream);
+            // loop and check the stream from listener
+            for stream in connection.incoming() {
+                //error handling for stream
+                match stream {
+                    Ok(streamdata) => println! {
+                    " data stream is receiving : {:?}", streamdata},
+                    Err(error) => {
+                        eprint!("error while getting stream ");
+                        eprint!("error: {}", error);
+                    }
+                }
+            }
+        }
+        Err(error) => {
+            println! {"error while establishing connection "};
+            println! {"error: {}", error};
+        }
     }
 }
-
 //create request struct
 
 struct Request {
@@ -61,6 +77,7 @@ fn handle_connection(mut stream: TcpStream) -> String {
                 eprintln!("failed to read from file: {}", e);
             }
         }
+
         //creating a response
         let response = format!(
             "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
