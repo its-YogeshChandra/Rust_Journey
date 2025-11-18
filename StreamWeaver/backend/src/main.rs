@@ -51,22 +51,22 @@ struct Request {
     data: String,
 }
 
-enum request_element {
-    HTTP,
-    GET,
-    POST,
-    PUT,
-    DELETE,
+enum RequestElement {
+    HTTP(String),
+    GET(String),
+    POST(String),
+    PUT(String),
+    DELETE(String),
 }
 
-fn handle_connection(mut stream: TcpStream) -> String {
+//option using impl
+
+fn handle_connection(mut stream: TcpStream) {
     //creating buffer
     //Buffers in Rust: In Rust, a buffer is typically a block of memory used for temporary storage of data. Buffers are commonly used when reading or writing data to or from sources like files, network sockets, or memory
     let mut buffer = [0; 512];
 
     stream.read(&mut buffer).unwrap();
-
-    let get = b"GET / HTTP/1.1\r\n";
 
     //read the buffer put and seperate different parts out of it
 
@@ -84,6 +84,11 @@ fn handle_connection(mut stream: TcpStream) -> String {
         route: String::from("random"),
     };
 
+    //create instance from the connection
+    let http_one = String::from("HTTP/1.1");
+    let http_two = String::from("HTTP/2");
+    let http_three = String::from("HTTP/3");
+
     //extract the values from the request
     for part in request.split(" ") {
         println!("------printing parts ------");
@@ -91,43 +96,49 @@ fn handle_connection(mut stream: TcpStream) -> String {
         println!("------------");
 
         //match the data and update the request_data object
-        match part {
-            request_element::HTTP => request_data.httpversion = String::from(&part),
-        }
-    }
-
-    if buffer.starts_with(get) {
-        println!("inside the function");
-
-        let mut file = File::open("hello.html").unwrap();
-
-        let mut contents = String::new();
-        match file.read_to_string(&mut contents) {
-            Ok(n) => {
-                println!("reading done : {}", n);
-            }
-            Err(e) => {
-                eprintln!("failed to read from file: {}", e);
-            }
+        if part == (http_one) {
+            request_data.httpversion = part.to_string();
+        } else if part == http_two {
+            request_data.httpversion = part.to_string();
+        } else if part == http_three {
+            request_data.httpversion = part.to_string();
         }
 
-        //creating a response
-        let response = format!(
-            "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
-            contents.len(),
-            contents
-        );
-
-        stream.write(response.as_bytes()).unwrap();
-        stream.flush().unwrap();
-
-        let working = String::from("working fine");
-        working
-    } else {
-        println!("invalid route or request type");
-        let error = String::from("invalid route or request type");
-        error
+        //
     }
+    //
+    // if buffer.starts_with(get) {
+    //     println!("inside the function");
+    //
+    //     let mut file = File::open("hello.html").unwrap();
+    //
+    //     let mut contents = String::new();
+    //     match file.read_to_string(&mut contents) {
+    //         Ok(n) => {
+    //             println!("reading done : {}", n);
+    //         }
+    //         Err(e) => {
+    //             eprintln!("failed to read from file: {}", e);
+    //         }
+    //     }
+    //
+    //     //creating a response
+    //     let response = format!(
+    //         "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
+    //         contents.len(),
+    //         contents
+    //     );
+    //
+    //     stream.write(response.as_bytes()).unwrap();
+    //     stream.flush().unwrap();
+    //
+    //     let working = String::from("working fine");
+    //     working
+    // } else {
+    //     println!("invalid route or request type");
+    //     let error = String::from("invalid route or request type");
+    //     error
+    // }
 }
 
 //reeuest format
