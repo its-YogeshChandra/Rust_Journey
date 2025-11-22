@@ -1,6 +1,4 @@
-use std::fs::File;
 use std::io::Read;
-use std::io::Write;
 // use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
@@ -8,13 +6,11 @@ use std::net::TcpStream;
 fn main() {
     //creating a simple webserver
     let listener = TcpListener::bind("127.0.0.1:8080");
-    println!("Hello, world!");
 
     // error handling if error while handling error
     match listener {
         Ok(connection) => {
             println! {"connection successfully established"};
-            // println! {"connection : {:?}", &connection};
 
             // loop and check the stream from listener
             for stream in connection.incoming() {
@@ -51,13 +47,13 @@ struct Request {
     data: String,
 }
 
-enum RequestElement {
-    HTTP(String),
-    GET(String),
-    POST(String),
-    PUT(String),
-    DELETE(String),
-}
+// enum RequestElement {
+//     HTTP(String),
+//     GET(String),
+//     POST(String),
+//     PUT(String),
+//     DELETE(String),
+// }
 
 //option using impl
 
@@ -85,7 +81,6 @@ fn handle_connection(mut stream: TcpStream) {
     };
 
     //create instance from the connection
-    let http_one = String::from("HTTP/1.1");
     let http_two = String::from("HTTP/2");
     let http_three = String::from("HTTP/3");
 
@@ -96,16 +91,24 @@ fn handle_connection(mut stream: TcpStream) {
         println!("------------");
 
         //match the data and update the request_data object
-        if part == (http_one) {
+        if part == "HTTP/1.1HOST:" {
+            println!("inside the http_one");
             request_data.httpversion = part.to_string();
         } else if part == http_two {
             request_data.httpversion = part.to_string();
         } else if part == http_three {
             request_data.httpversion = part.to_string();
+        } else if part == http_three {
+            request_data.httpversion = part.to_string();
+        } else if part == "GET" || part == "POST" || part == "DELETE" || part == "PUT" {
+            request_data.method = part.to_string();
+        } else if part.starts_with("/") {
+            request_data.route = part.to_string()
         }
-
-        //
     }
+
+    println!("http_version : {}", &request_data.httpversion);
+
     //
     // if buffer.starts_with(get) {
     //     println!("inside the function");
@@ -140,7 +143,6 @@ fn handle_connection(mut stream: TcpStream) {
     //     error
     // }
 }
-
 //reeuest format
 //HTTP-Version Status-Code Reason-Phrase CRLF
 // headers CRLF
