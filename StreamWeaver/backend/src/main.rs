@@ -80,10 +80,6 @@ fn handle_connection(mut stream: TcpStream) {
         route: String::from("random"),
     };
 
-    //create instance from the connection
-    let http_two = String::from("HTTP/2");
-    let http_three = String::from("HTTP/3");
-
     //extract the values from the request
     for part in request.split(" ") {
         println!("------printing parts ------");
@@ -91,14 +87,7 @@ fn handle_connection(mut stream: TcpStream) {
         println!("------------");
 
         //match the data and update the request_data object
-        if part == "HTTP/1.1HOST:" {
-            println!("inside the http_one");
-            request_data.httpversion = part.to_string();
-        } else if part == http_two {
-            request_data.httpversion = part.to_string();
-        } else if part == http_three {
-            request_data.httpversion = part.to_string();
-        } else if part == http_three {
+        if part.starts_with("HTTP") {
             request_data.httpversion = part.to_string();
         } else if part == "GET" || part == "POST" || part == "DELETE" || part == "PUT" {
             request_data.method = part.to_string();
@@ -109,7 +98,6 @@ fn handle_connection(mut stream: TcpStream) {
 
     println!("http_version : {}", &request_data.httpversion);
 
-    //
     // if buffer.starts_with(get) {
     //     println!("inside the function");
     //
