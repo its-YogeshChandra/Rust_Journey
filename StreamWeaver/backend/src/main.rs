@@ -45,6 +45,7 @@ struct Request {
     route: String,
     method: String,
     data: String,
+    content_type: String,
 }
 
 // enum RequestElement {
@@ -64,6 +65,8 @@ fn handle_connection(mut stream: TcpStream) {
 
     stream.read(&mut buffer).unwrap();
 
+    println!("raw stream data : {:?}", &stream);
+
     //read the buffer put and seperate different parts out of it
 
     let request = String::from_utf8_lossy(&buffer[..]);
@@ -78,19 +81,27 @@ fn handle_connection(mut stream: TcpStream) {
         host: String::from("random"),
         method: String::from("random"),
         route: String::from("random"),
+        content_type: String::from("random"),
     };
 
     //extract the values from the request
-    for part in request.split(" ") {
+    for part in request.split("\r\n") {
         println!("------printing parts ------");
         println! {"{}", part};
         println!("------------");
 
         //match the data and update the request_data object
-        if part.starts_with("HTTP") {
-            request_data.httpversion = part.to_string();
-        } else if part == "GET" || part == "POST" || part == "DELETE" || part == "PUT" {
-            request_data.method = part.to_string();
+        if part.starts_with("GET")
+            || part.starts_with("POST")
+            || part.starts_with("DELETE")
+            || part.starts_with("PUT")
+        {
+            for items in part.split(" ") {
+                match items {
+
+                }
+                request_data.method = part.to_string();
+            }
         } else if part.starts_with("/") {
             request_data.route = part.to_string()
         }
@@ -129,9 +140,9 @@ fn handle_connection(mut stream: TcpStream) {
     //     println!("invalid route or request type");
     //     let error = String::from("invalid route or request type");
     //     error
-    // }
 }
-//reeuest format
+
+//request format
 //HTTP-Version Status-Code Reason-Phrase CRLF
 // headers CRLF
 // message-body
