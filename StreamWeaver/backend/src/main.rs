@@ -41,11 +41,12 @@ fn main() {
 
 struct Request {
     httpversion: String,
-    host: String,
+    host: i32,
     route: String,
     method: String,
-    data: String,
+    body_data: String,
     content_type: String,
+    params_data: String,
 }
 
 // enum RequestElement {
@@ -76,14 +77,14 @@ fn handle_connection(mut stream: TcpStream) {
 
     //make instance of request and update the values
     let mut request_data = Request {
-        data: String::from("random"),
+        body_data: String::from("random"),
         httpversion: String::from("random"),
-        host: String::from("random"),
+        host: 1234,
         method: String::from("random"),
         route: String::from("random"),
         content_type: String::from("random"),
+        params_data: String::from("random "),
     };
-
     //extract the values from the request
     for part in request.split("\r\n") {
         println!("------printing parts ------");
@@ -98,17 +99,39 @@ fn handle_connection(mut stream: TcpStream) {
         {
             for items in part.split(" ") {
                 match items {
-
+                    "GET" | "POST" | "PUT" | "DELETE" => request_data.method = items.to_string(),
+                    s if s.starts_with("HTTP") => request_data.httpversion = s.to_string(),
+                    "/" => request_data.route = items.to_string(),
+                    _ => {
+                        eprintln!("the data is empty");
+                    }
                 }
-                request_data.method = part.to_string();
             }
-        } else if part.starts_with("/") {
-            request_data.route = part.to_string()
+        }
+        // for content type
+        else if part.starts_with("Content-Type") {
+            request_data.content_type = part.to_string()
+        }
+        // for host
+        else if part.starts_with("Host") {
+            for items in part.split(" ") {
+                println!("items: {}", items);
+                match items {
+                    s if s.starts_with("1") => request_data.host = s.parse::<i32>().unwrap(),
+                    _ => {
+                        println!(" ");
+                    }
+                }
+            }
+        }
+        //for body data if present
+        else if part.starts_with("{") {
+            request_data.body_data = part.to_string()
         }
     }
-
     println!("http_version : {}", &request_data.httpversion);
-
+    println!("body_data : {}", &request_data.body_data);
+    println!("host : {}", &request_data.host);
     // if buffer.starts_with(get) {
     //     println!("inside the function");
     //
