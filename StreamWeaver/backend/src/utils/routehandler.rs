@@ -1,5 +1,7 @@
 //have to make function that will handle the routes
 
-pub fn route_handler(arg: Type) -> RetType {
+
+//making a high order function  
+pub fn route_creator(assert_eq!) -> RetType {
     todo!();
 }

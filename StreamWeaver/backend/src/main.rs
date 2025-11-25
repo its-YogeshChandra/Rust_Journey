@@ -1,8 +1,9 @@
 use std::io::Read;
 // use std::io::prelude::*;
+use std::fs::File;
+use std::io::Write;
 use std::net::TcpListener;
 use std::net::TcpStream;
-
 fn main() {
     //creating a simple webserver
     let listener = TcpListener::bind("127.0.0.1:8080");
@@ -41,7 +42,7 @@ fn main() {
 
 struct Request {
     httpversion: String,
-    host: i32,
+    host: String,
     route: String,
     method: String,
     body_data: String,
@@ -79,7 +80,7 @@ fn handle_connection(mut stream: TcpStream) {
     let mut request_data = Request {
         body_data: String::from("random"),
         httpversion: String::from("random"),
-        host: 1234,
+        host: String::from("random "),
         method: String::from("random"),
         route: String::from("random"),
         content_type: String::from("random"),
@@ -117,7 +118,7 @@ fn handle_connection(mut stream: TcpStream) {
             for items in part.split(" ") {
                 println!("items: {}", items);
                 match items {
-                    s if s.starts_with("1") => request_data.host = s.parse::<i32>().unwrap(),
+                    s if s.starts_with("1") => request_data.host = s.to_string(),
                     _ => {
                         println!(" ");
                     }
@@ -132,33 +133,33 @@ fn handle_connection(mut stream: TcpStream) {
     println!("http_version : {}", &request_data.httpversion);
     println!("body_data : {}", &request_data.body_data);
     println!("host : {}", &request_data.host);
-    // if buffer.starts_with(get) {
-    //     println!("inside the function");
-    //
-    //     let mut file = File::open("hello.html").unwrap();
-    //
-    //     let mut contents = String::new();
-    //     match file.read_to_string(&mut contents) {
-    //         Ok(n) => {
-    //             println!("reading done : {}", n);
-    //         }
-    //         Err(e) => {
-    //             eprintln!("failed to read from file: {}", e);
-    //         }
-    //     }
-    //
-    //     //creating a response
-    //     let response = format!(
-    //         "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
-    //         contents.len(),
-    //         contents
-    //     );
-    //
-    //     stream.write(response.as_bytes()).unwrap();
-    //     stream.flush().unwrap();
-    //
-    //     let working = String::from("working fine");
-    //     working
+
+    //read from the file
+    let mut file = File::open("hello.html").unwrap();
+
+    let mut contents = String::new();
+    match file.read_to_string(&mut contents) {
+        Ok(n) => {
+            println!("reading done : {}", n);
+        }
+        Err(e) => {
+            eprintln!("failed to read from file: {}", e);
+        }
+    }
+
+    //creating a response
+    let response = format!(
+        "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
+        contents.len(),
+        contents
+    );
+
+    //sending data through stream
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
+
+    //sending of the maker
+
     // } else {
     //     println!("invalid route or request type");
     //     let error = String::from("invalid route or request type");
