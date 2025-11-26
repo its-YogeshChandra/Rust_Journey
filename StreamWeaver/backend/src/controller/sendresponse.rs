@@ -4,7 +4,7 @@ pub struct data {
     age: i32,
 }
 
-fn send_response(user: str) -> data {
+pub fn send_data(user: str) -> data {
     //create a user name adam out of struct and return that
 
     //check for the value in stuct

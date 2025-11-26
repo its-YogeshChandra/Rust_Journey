@@ -4,7 +4,15 @@ use std::fs::File;
 use std::io::Write;
 use std::net::TcpListener;
 use std::net::TcpStream;
+//import the route creator from routes folder
+mod routes;
+
+use routes::routes_creator;
+
 fn main() {
+    //checking the routes
+    let route_data = routes_creator();
+
     //creating a simple webserver
     let listener = TcpListener::bind("127.0.0.1:8080");
 

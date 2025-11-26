@@ -1,4 +1,4 @@
-// public modules in the utils directory
-
-//module from route handler
 pub mod routehandler;
+
+pub use routehandler::Routes_Data;
+
