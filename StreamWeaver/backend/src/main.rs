@@ -6,6 +6,10 @@ use std::net::TcpListener;
 use std::net::TcpStream;
 //import the route creator from routes folder
 mod routes;
+//import utils module
+mod utils;
+//import controller module
+mod controller;
 
 use routes::routes_creator;
 
