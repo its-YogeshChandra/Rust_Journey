@@ -12,6 +12,7 @@ mod utils;
 mod controller;
 
 use routes::routes_creator;
+use utils::Request;
 
 fn main() {
     //checking the routes
@@ -50,26 +51,6 @@ fn main() {
     }
 }
 
-//create request struct
-
-struct Request {
-    httpversion: String,
-    host: String,
-    route: String,
-    method: String,
-    body_data: String,
-    content_type: String,
-    params_data: String,
-}
-
-// enum RequestElement {
-//     HTTP(String),
-//     GET(String),
-//     POST(String),
-//     PUT(String),
-//     DELETE(String),
-// }
-
 //option using impl
 
 fn handle_connection(mut stream: TcpStream) {
@@ -89,15 +70,16 @@ fn handle_connection(mut stream: TcpStream) {
     println!("Request : {}", request);
 
     //make instance of request and update the values
-    let mut request_data = Request {
-        body_data: String::from("random"),
-        httpversion: String::from("random"),
-        host: String::from("random "),
-        method: String::from("random"),
-        route: String::from("random"),
-        content_type: String::from("random"),
-        params_data: String::from("random "),
-    };
+    let mut request_data = Request::new(
+        "random".to_string(),
+        "random".to_string(),
+        "random".to_string(),
+        "random".to_string(),
+        "random".to_string(),
+        "random".to_string(),
+        "random".to_string(),
+    );
+
     //extract the values from the request
     for part in request.split("\r\n") {
         println!("------printing parts ------");

@@ -1,17 +1,19 @@
 //have to make function that will handle the routes
-pub struct Route_Data {
+pub struct RouteData {
     route: String,
     function: fn(),
+    function_path: String,
     method: String,
 }
 
 //impl for route_data
-impl Route_Data {
+impl RouteData {
     // create and returns the instance of the routedata struct
-    pub fn new(route: String, function: fn(), method: String) -> Self {
+    pub fn new(route: String, function: fn(), function_path: String, method: String) -> Self {
         Self {
             route: route,
             function: function,
+            function_path: function_path,
             method: method,
         }
     }
