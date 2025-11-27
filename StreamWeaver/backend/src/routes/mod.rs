@@ -4,4 +4,4 @@
 pub mod routes;
 
 //exporting function from the routes file
-pub use routes::routes_creator;
+pub use routes::routes_moderator;

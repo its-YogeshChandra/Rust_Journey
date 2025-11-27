@@ -11,13 +11,9 @@ mod utils;
 //import controller module
 mod controller;
 
-use routes::routes_creator;
+use routes::routes_moderator;
 use utils::Request;
-
 fn main() {
-    //checking the routes
-    let route_data = routes_creator();
-
     //creating a simple webserver
     let listener = TcpListener::bind("127.0.0.1:8080");
 
@@ -128,36 +124,35 @@ fn handle_connection(mut stream: TcpStream) {
     println!("body_data : {}", &request_data.body_data);
     println!("host : {}", &request_data.host);
 
-    //read from the file
-    let mut file = File::open("hello.html").unwrap();
+    //call the route moderator function
+    let response = routes_moderator(request_data);
 
-    let mut contents = String::new();
-    match file.read_to_string(&mut contents) {
-        Ok(n) => {
-            println!("reading done : {}", n);
-        }
-        Err(e) => {
-            eprintln!("failed to read from file: {}", e);
-        }
-    }
+    //helpful in calling the response or error reponse
+    //handle the response object from this
 
-    //creating a response
-    let response = format!(
-        "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
-        contents.len(),
-        contents
-    );
-
-    //sending data through stream
-    stream.write(response.as_bytes()).unwrap();
-    stream.flush().unwrap();
-
-    //sending of the maker
-
-    // } else {
-    //     println!("invalid route or request type");
-    //     let error = String::from("invalid route or request type");
-    //     error
+    // //read from the file
+    // let mut file = File::open("hello.html").unwrap();
+    //
+    // let mut contents = String::new();
+    // match file.read_to_string(&mut contents) {
+    //     Ok(n) => {
+    //         println!("reading done : {}", n);
+    //     }
+    //     Err(e) => {
+    //         eprintln!("failed to read from file: {}", e);
+    //     }
+    // }
+    //
+    // //creating a response
+    // let response = format!(
+    //     "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
+    //     contents.len(),
+    //     contents
+    // );
+    //
+    // //sending data through stream
+    // stream.write(response.as_bytes()).unwrap();
+    // stream.flush().unwrap();
 }
 
 //request format
