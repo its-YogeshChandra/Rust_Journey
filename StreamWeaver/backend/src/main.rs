@@ -1,10 +1,8 @@
 use std::io::Read;
 // use std::io::prelude::*;
-use std::fs::File;
-use std::io::Write;
 use std::net::TcpListener;
 use std::net::TcpStream;
-//import the route creator from routes folder
+//import the route module from routes folder
 mod routes;
 //import utils module
 mod utils;
@@ -58,7 +56,7 @@ fn handle_connection(mut stream: TcpStream) {
 
     println!("raw stream data : {:?}", &stream);
 
-    //read the buffer put and seperate different parts out of it
+    //read the buffer put and seperate different parts of it
 
     let request = String::from_utf8_lossy(&buffer[..]);
 
