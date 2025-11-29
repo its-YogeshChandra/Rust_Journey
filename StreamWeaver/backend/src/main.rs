@@ -123,7 +123,7 @@ fn handle_connection(mut stream: TcpStream) {
     println!("host : {}", &request_data.host);
 
     //call the route moderator function
-    let response = routes_moderator(request_data);
+    routes_moderator(request_data, stream);
 
     //helpful in calling the response or error reponse
     //handle the response object from this

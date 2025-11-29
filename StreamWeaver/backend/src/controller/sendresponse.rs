@@ -8,6 +8,7 @@ use crate::utils::errorhandler;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+
 pub struct Data {
     name: String,
     username: String,
@@ -31,6 +32,7 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
         let adam = Data::new("adam".to_string(), "Levine".to_string(), 21);
 
         //create the response struct
+        //serealie data : as complex data needs to be serealize in the server
         let data = serde_json::to_string(&adam).expect("error while parsing data");
         let message = String::from("successfully send data");
         let response = Response::new_struct(true, message, data);
