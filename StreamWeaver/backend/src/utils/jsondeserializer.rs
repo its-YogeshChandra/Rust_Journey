@@ -14,6 +14,7 @@ impl<T> ResponseBody<T> {
     }
 }
 
+// function to desirealize the data
 pub fn json_deserializer<'de, T>(datastring: &'de str) -> ResponseBody<T>
 where
     T: Deserialize<'de>,

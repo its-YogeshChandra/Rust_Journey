@@ -124,33 +124,6 @@ fn handle_connection(mut stream: TcpStream) {
 
     //call the route moderator function
     routes_moderator(request_data, stream);
-
-    //helpful in calling the response or error reponse
-    //handle the response object from this
-
-    // //read from the file
-    // let mut file = File::open("hello.html").unwrap();
-    //
-    // let mut contents = String::new();
-    // match file.read_to_string(&mut contents) {
-    //     Ok(n) => {
-    //         println!("reading done : {}", n);
-    //     }
-    //     Err(e) => {
-    //         eprintln!("failed to read from file: {}", e);
-    //     }
-    // }
-    //
-    // //creating a response
-    // let response = format!(
-    //     "HTTP/1.1 200 OK \r\nContent-Type: text/html\r\nContent-Length: {}\r\n\r\n{}",
-    //     contents.len(),
-    //     contents
-    // );
-    //
-    // //sending data through stream
-    // stream.write(response.as_bytes()).unwrap();
-    // stream.flush().unwrap();
 }
 
 //request format

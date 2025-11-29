@@ -2,7 +2,7 @@ use std::io::Write;
 use std::net::TcpStream;
 
 //error response handler
-pub fn errorhandler(mut stream: TcpStream, error: &str) {
+pub fn errorhandler(mut stream: &TcpStream, error: &str) {
     let error = error.to_string();
 
     //creating a error response

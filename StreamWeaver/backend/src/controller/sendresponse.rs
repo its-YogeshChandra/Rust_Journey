@@ -7,7 +7,7 @@ use std::net::TcpStream;
 use crate::utils::errorhandler;
 use crate::utils::{ResponseBody, json_deserializer};
 use serde::{Deserialize, Serialize};
-use serde_json::{Error, Value};
+use serde_json::Value;
 #[derive(Serialize, Deserialize)]
 
 // response data that has to be send
@@ -28,9 +28,9 @@ impl Data {
     }
 }
 
-//create the struct
-enum ResType {
-    Name(String),
+//struct to contain the data
+struct DecodedObj {
+    name: String,
 }
 
 // controller function that send_data when called with certain data;
@@ -40,14 +40,32 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
 
     //take the data out of it
     let body: Value = user.data;
+
+    //variable for key value
+    let mut body_value_obj = DecodedObj {
+        name: String::from("marco"),
+    };
+
     // create a match system that match for the particular keys in the gained struct data;
-    if let Some(name) = user.data.get("name").and_then(|v| v.as_str()) {
-        if name == "adam" {
-            println!("the name is adam");
+    let keys = ["name"];
+    if let Some(obj) = body.as_object() {
+        for key in keys {
+            if !obj.contains_key(key) {
+                let error = "key is missing , {key}";
+                errorhandler(&stream, error);
+            } else {
+                match key {
+                    "name" => body_value_obj.name = obj[key].to_string(),
+                    _ => {
+                        println!("error value of the obj ");
+                    }
+                }
+            }
         }
     }
+
     // check that if data field match to this name ;
-    if bodydata {
+    if body_value_obj.name == "adam" {
         let adam = Data::new("adam".to_string(), "Levine".to_string(), 21);
 
         //create the response struct
@@ -61,6 +79,6 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
         let error_val = String::from("name doesn't match to the payload");
 
         //calling the error handler
-        errorhandler(stream, &error_val);
+        errorhandler(&stream, &error_val);
     }
 }
