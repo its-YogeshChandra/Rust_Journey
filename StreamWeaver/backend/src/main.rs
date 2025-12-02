@@ -90,7 +90,7 @@ fn handle_connection(mut stream: TcpStream) {
                 match items {
                     "GET" | "POST" | "PUT" | "DELETE" => request_data.method = items.to_string(),
                     s if s.starts_with("HTTP") => request_data.httpversion = s.to_string(),
-                    "/" => request_data.route = items.to_string(),
+                    m if m.starts_with("/") => request_data.route = m.to_string(),
                     _ => {
                         eprintln!("the data is empty");
                     }
@@ -118,9 +118,6 @@ fn handle_connection(mut stream: TcpStream) {
             request_data.body_data = part.to_string()
         }
     }
-    println!("http_version : {}", &request_data.httpversion);
-    println!("body_data : {}", &request_data.body_data);
-    println!("host : {}", &request_data.host);
 
     //call the route moderator function
     routes_moderator(request_data, stream);

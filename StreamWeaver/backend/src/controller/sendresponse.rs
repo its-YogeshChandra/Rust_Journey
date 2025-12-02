@@ -28,11 +28,6 @@ impl Data {
     }
 }
 
-//struct to contain the data
-struct DecodedObj {
-    name: String,
-}
-
 // controller function that send_data when called with certain data;
 pub fn send_data(request: Request, stream: TcpStream) -> () {
     // match the argument with the defined set
@@ -40,11 +35,6 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
 
     //take the data out of it
     let body: Value = user.data;
-
-    //variable for key value
-    let mut body_value_obj = DecodedObj {
-        name: String::from("marco"),
-    };
 
     // create a match system that match for the particular keys in the gained struct data;
     let keys = ["name"];
@@ -55,7 +45,25 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
                 errorhandler(&stream, error);
             } else {
                 match key {
-                    "name" => body_value_obj.name = obj[key].to_string(),
+                    "name" => {
+                        if obj[key] == "adam" {
+                            let adam = Data::new("adam".to_string(), "Levine".to_string(), 21);
+
+                            //create the response struct
+                            //serealie data : as complex data needs to be serealize in the server
+                            let data =
+                                serde_json::to_string(&adam).expect("error while parsing data");
+                            let message = String::from("successfully send data");
+                            let response = Response::new_struct(true, message, data);
+
+                            handle_response(response, stream)
+                        } else {
+                            let error_val = String::from("name doesn't match to the payload");
+
+                            //calling the error handler
+                            errorhandler(&stream, &error_val);
+                        }
+                    }
                     _ => {
                         println!("error value of the obj ");
                     }
@@ -65,20 +73,21 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
     }
 
     // check that if data field match to this name ;
-    if body_value_obj.name == "adam" {
-        let adam = Data::new("adam".to_string(), "Levine".to_string(), 21);
-
-        //create the response struct
-        //serealie data : as complex data needs to be serealize in the server
-        let data = serde_json::to_string(&adam).expect("error while parsing data");
-        let message = String::from("successfully send data");
-        let response = Response::new_struct(true, message, data);
-
-        handle_response(response, stream)
-    } else {
-        let error_val = String::from("name doesn't match to the payload");
-
-        //calling the error handler
-        errorhandler(&stream, &error_val);
-    }
+    // println!("body value obj : {:#?}", body_value_obj);
+    // if body_value_obj.name == "adam" {
+    //     let adam = Data::new("adam".to_string(), "Levine".to_string(), 21);
+    //
+    //     //create the response struct
+    //     //serealie data : as complex data needs to be serealize in the server
+    //     let data = serde_json::to_string(&adam).expect("error while parsing data");
+    //     let message = String::from("successfully send data");
+    //     let response = Response::new_struct(true, message, data);
+    //
+    //     handle_response(response, stream)
+    // } else {
+    //     let error_val = String::from("name doesn't match to the payload");
+    //
+    //     //calling the error handler
+    //     errorhandler(&stream, &error_val);
+    // }
 }

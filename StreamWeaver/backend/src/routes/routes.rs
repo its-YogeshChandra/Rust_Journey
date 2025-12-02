@@ -26,10 +26,10 @@ pub fn routes_moderator(request: Request, stream: TcpStream) -> () {
     if method == "POST" || path == "GET" || path == "DELETE" || path == "PUT" {
         match path.as_str() {
             "/create" => send_data(request, stream),
-            _ => errorhandler(stream, blank_route_error.as_str()),
+            _ => errorhandler(&stream, blank_route_error.as_str()),
         };
     } else {
         let error = "invalid method";
-        errorhandler(stream, &error)
+        errorhandler(&stream, &error)
     }
 }
