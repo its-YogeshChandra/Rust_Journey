@@ -36,6 +36,10 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
     //take the data out of it
     let body: Value = user.data;
 
+    //make a value obj to put on the json value for the key
+    let obj = serde_json::Map::new();
+    let mut body_data = Value::Object(obj);
+
     // create a match system that match for the particular keys in the gained struct data;
     let keys = ["name"];
     if let Some(obj) = body.as_object() {
@@ -45,25 +49,7 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
                 errorhandler(&stream, error);
             } else {
                 match key {
-                    "name" => {
-                        if obj[key] == "adam" {
-                            let adam = Data::new("adam".to_string(), "Levine".to_string(), 21);
-
-                            //create the response struct
-                            //serealie data : as complex data needs to be serealize in the server
-                            let data =
-                                serde_json::to_string(&adam).expect("error while parsing data");
-                            let message = String::from("successfully send data");
-                            let response = Response::new_struct(true, message, data);
-
-                            handle_response(response, stream)
-                        } else {
-                            let error_val = String::from("name doesn't match to the payload");
-
-                            //calling the error handler
-                            errorhandler(&stream, &error_val);
-                        }
-                    }
+                    "name" => body_data["name"] = obj[key].clone(),
                     _ => {
                         println!("error value of the obj ");
                     }
@@ -73,21 +59,20 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
     }
 
     // check that if data field match to this name ;
-    // println!("body value obj : {:#?}", body_value_obj);
-    // if body_value_obj.name == "adam" {
-    //     let adam = Data::new("adam".to_string(), "Levine".to_string(), 21);
-    //
-    //     //create the response struct
-    //     //serealie data : as complex data needs to be serealize in the server
-    //     let data = serde_json::to_string(&adam).expect("error while parsing data");
-    //     let message = String::from("successfully send data");
-    //     let response = Response::new_struct(true, message, data);
-    //
-    //     handle_response(response, stream)
-    // } else {
-    //     let error_val = String::from("name doesn't match to the payload");
-    //
-    //     //calling the error handler
-    //     errorhandler(&stream, &error_val);
-    // }
+    println!("body_data : {}", body_data["name"]);
+    if body_data["name"] == "adam" {
+        let adam = Data::new("adam".to_string(), "Levine".to_string(), 21);
+
+        //create the response struct
+        //serealie data : as complex data needs to be serealize in the server
+        let message = String::from("successfully send data");
+        let response = Response::new_struct(true, message, adam);
+
+        handle_response(response, stream)
+    } else {
+        let error_val = String::from("name doesn't match to the payload");
+
+        //calling the error handler
+        errorhandler(&stream, &error_val);
+    }
 }
