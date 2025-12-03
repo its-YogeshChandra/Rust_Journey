@@ -45,8 +45,8 @@ pub fn send_data(request: Request, stream: TcpStream) -> () {
     if let Some(obj) = body.as_object() {
         for key in keys {
             if !obj.contains_key(key) {
-                let error = "key is missing , {key}";
-                errorhandler(&stream, error);
+                let error = format!("key is missing : {}", key);
+                errorhandler(&stream, &error);
             } else {
                 match key {
                     "name" => body_data["name"] = obj[key].clone(),
