@@ -5,7 +5,7 @@ use crate::utils::handle_response;
 use std::net::TcpStream;
 // bringing  sirealization crate serde
 use crate::utils::errorhandler;
-use crate::utils::{ResponseBody, json_deserializer};
+use crate::utils::json_deserializer;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 #[derive(Serialize, Deserialize)]
