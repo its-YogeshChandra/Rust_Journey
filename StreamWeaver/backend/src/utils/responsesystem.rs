@@ -28,15 +28,24 @@ impl<T: Serialize> Response<T> {
 //function to send the response
 pub fn handle_response<T: Serialize>(response: Response<T>, mut stream: TcpStream) {
     // use serde to serealize the data
-    let resposne_data =
+    let response_data =
         serde_json::to_string(&response).expect("error while making json response ");
 
     //make the response string from it
-    let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", resposne_data);
+    let response = format!(
+        "HTTP/1.1 200 OK\r\n\
+         Content-Type: application/json\r\n\
+         Content-Length: {}\r\n\
+         Connection: close\r\n\
+         \r\n\
+         {}",
+        response_data.len(),
+        response_data
+    );
 
     // send the data to the stream
     stream
-        .write(response.as_bytes())
+        .write_all(response.as_bytes())
         .expect("error while writing");
 
     //flush the stream
