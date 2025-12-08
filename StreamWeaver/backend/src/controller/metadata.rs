@@ -20,6 +20,8 @@ enum DynamicValue {
     Boolean(bool),
 }
 
+struct 
+
 #[tokio::main]
 pub async fn meta_data_and_options(request: Request, stream: TcpStream) -> () {
     // get the data from the request
