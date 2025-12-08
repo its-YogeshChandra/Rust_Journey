@@ -11,16 +11,9 @@ use crate::utils::{ResponseBody, json_deserializer};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashMap;
 use std::process::Command;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-
-enum DynamicValue {
-    Number(i32),
-    Text(String),
-    Boolean(bool),
-}
-
-struct 
 
 #[tokio::main]
 pub async fn meta_data_and_options(request: Request, stream: TcpStream) -> () {
@@ -86,7 +79,7 @@ pub async fn meta_data_and_options(request: Request, stream: TcpStream) -> () {
         }
     }
 
-    //check if error present and then send the erro
+    //check if error present and then send the error
     if !output.is_empty() {
         for parts in output.lines() {
             //            println!("output parts: {}", parts);

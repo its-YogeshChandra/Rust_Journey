@@ -8,7 +8,8 @@ mod routes;
 mod utils;
 //import controller module
 mod controller;
-
+//import services module
+mod services;
 use routes::routes_moderator;
 use utils::Request;
 fn main() {
