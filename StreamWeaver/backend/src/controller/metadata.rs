@@ -14,6 +14,12 @@ use serde_json::Value;
 use std::process::Command;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
+enum DynamicValue {
+    Number(i32),
+    Text(String),
+    Boolean(bool),
+}
+
 #[tokio::main]
 pub async fn meta_data_and_options(request: Request, stream: TcpStream) -> () {
     // get the data from the request
@@ -56,11 +62,40 @@ pub async fn meta_data_and_options(request: Request, stream: TcpStream) -> () {
         .arg("--list-formats")
         .arg(video_url)
         .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
         .output()
         .expect("failed to execute the process");
 
     //fix the data to that string
     let output = String::from_utf8_lossy(&ytdlp_process.stdout);
 
-    println!("output : {}", output);
+    //fetch the error
+    let error = String::from_utf8_lossy(&ytdlp_process.stderr);
+
+    // check if error isn't empty
+    if !error.is_empty() {
+        //call the error function
+        for lines in error.lines() {
+            match &lines {
+                //if lines start with ERROR then throw error
+                s if s.starts_with("ERROR") => errorhandler(&stream, &s),
+                _ => println!("readin error"),
+            }
+        }
+    }
+
+    //check if error present and then send the erro
+    if !output.is_empty() {
+        for parts in output.lines() {
+            //            println!("output parts: {}", parts);
+            if parts.contains("1920x1080") {
+                println!("parts are : {}", parts);
+            }
+        }
+    }
+
+    //    println!("output : {}", output);
+    // for parts in error.split(":") {
+    //     println!("error parts: {}", parts);
+    // }
 }
