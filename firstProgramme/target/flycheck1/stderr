@@ -1,2 +1,50 @@
-    Blocking waiting for file lock on package cache
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+   0.002457041s  INFO prepare_target{force=false package_id=firstprogramme v0.1.0 (/Users/test/Documents/Rust/firstProgramme) target="firstprogramme"}: cargo::core::compiler::fingerprint: fingerprint error for firstprogramme v0.1.0 (/Users/test/Documents/Rust/firstProgramme)/Check { test: false }/TargetInner { name: "firstprogramme", doc: true, ..: with_path("/Users/test/Documents/Rust/firstProgramme/src/main.rs", Edition2024) }
+   0.002469500s  INFO prepare_target{force=false package_id=firstprogramme v0.1.0 (/Users/test/Documents/Rust/firstProgramme) target="firstprogramme"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/test/Documents/Rust/firstProgramme/target/debug/.fingerprint/firstprogramme-4a278dd33304bdc6/bin-firstprogramme`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.018495083s  INFO prepare_target{force=false package_id=firstprogramme v0.1.0 (/Users/test/Documents/Rust/firstProgramme) target="firstprogramme"}: cargo::core::compiler::fingerprint: fingerprint error for firstprogramme v0.1.0 (/Users/test/Documents/Rust/firstProgramme)/Check { test: true }/TargetInner { name: "firstprogramme", doc: true, ..: with_path("/Users/test/Documents/Rust/firstProgramme/src/main.rs", Edition2024) }
+   0.018503666s  INFO prepare_target{force=false package_id=firstprogramme v0.1.0 (/Users/test/Documents/Rust/firstProgramme) target="firstprogramme"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/test/Documents/Rust/firstProgramme/target/debug/.fingerprint/firstprogramme-0850ebdcc71c8960/test-bin-firstprogramme`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+    Checking firstprogramme v0.1.0 (/Users/test/Documents/Rust/firstProgramme)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.23s

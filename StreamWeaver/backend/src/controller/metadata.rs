@@ -1,13 +1,13 @@
 //controller for getting meta data
 //bringig the reuest sturct  crate ;
-use crate::utils::Request;
-use crate::utils::Response;
 use crate::utils::handle_response;
 use std::net::TcpStream;
 use std::process::Stdio;
+use std::result;
 // bringing  sirealization crate serde
+use crate::services::format_handler;
 use crate::utils::errorhandler;
-use crate::utils::{ResponseBody, json_deserializer};
+use crate::utils::{Request, Response, ResponseBody, json_deserializer};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -79,18 +79,17 @@ pub async fn meta_data_and_options(request: Request, stream: TcpStream) -> () {
         }
     }
 
+    let mut result_output: Vec<String> = Vec::new();
     //check if error present and then send the error
     if !output.is_empty() {
-        for parts in output.lines() {
-            //            println!("output parts: {}", parts);
-            if parts.contains("1920x1080") {
-                println!("parts are : {}", parts);
-            }
-        }
+        result_output = format_handler(&output.to_string(), &stream)
+            .expect("error while getting value from format handler ");
+    } else {
+        println!("option is empty ");
     }
 
-    //    println!("output : {}", output);
-    // for parts in error.split(":") {
-    //     println!("error parts: {}", parts);
-    // }
+    //make struct to return
+    let message = String::from("format successfully received");
+    let response = Response::new_struct(true, message, result_output);
+    handle_response(response, stream);
 }
