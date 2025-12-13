@@ -1,4 +1,4 @@
-use crate::controller::{meta_data_and_options, send_data};
+use crate::controller::{extractor, meta_data_and_options, send_data};
 use crate::utils::Request;
 use crate::utils::errorhandler::errorhandler;
 use std::net::TcpStream;
@@ -28,6 +28,7 @@ pub fn routes_moderator(request: Request, stream: TcpStream) -> () {
         match path.as_str() {
             "/create" => send_data(request, stream),
             "/metadata" => meta_data_and_options(request, stream),
+            "/extractor" => extractor(request, stream),
             _ => errorhandler(&stream, blank_route_error.as_str()),
         };
     } else {

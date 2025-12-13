@@ -1,11 +1,13 @@
 use crate::utils::{
     Request, Response, ResponseBody, errorhandler, handle_response, json_deserializer,
 };
+use core::error;
 use serde_json::Value;
-use std::ffi::OsStr;
 use std::process::Stdio;
 use std::{collections::HashMap, net::TcpStream, process::Command};
-pub fn extractor(request: Request, stream: TcpStream) {
+
+#[tokio::main]
+pub async fn extractor(request: Request, stream: TcpStream) {
     //get the data from the reqeust
     let ResponseBody { data }: ResponseBody<Value> = json_deserializer(&request.body_data);
 
@@ -15,47 +17,57 @@ pub fn extractor(request: Request, stream: TcpStream) {
     let mut main_data: HashMap<String, String> = HashMap::new();
 
     // check for the keys in the data
-    let keys = ["format", "url"];
+    let keys = ["bitrate", "url", "content-length"];
     if let Some(data) = iterable_data {
         //iterate the value
         for key in keys {
             //check if fetched object has particular key
             if !data.contains_key(key) {
                 //throw the error to the frontend
-                let error = format!("{}: key is missing", key);
+                let error = format!("{}: key is missing", key,);
                 errorhandler(&stream, &error)
             } else {
-                //add the keys and its value to the obj
-                match &data[key] {
-                    Value::String(s) if s == "1080p" => {
-                        main_data.insert(key.to_string(), data[key].to_string());
+                match (key, &data[key]) {
+                    //add the bitrate
+                    ("bitrate", Value::String(s))
+                        if matches!(
+                            s.as_str(),
+                            "1080p" | "720p" | "480p" | "360p" | "240p" | "144p"
+                        ) =>
+                    {
+                        main_data.insert(key.to_string(), s.clone());
                     }
-                    Value::String(s) if s == "720p" => {
-                        main_data.insert(key.to_string(), data[key].to_string());
+
+                    // add the url
+                    ("url", Value::String(s)) if s.starts_with("http") => {
+                        main_data.insert(key.to_string(), s.clone());
                     }
-                    Value::String(s) if s == "480p" => {
-                        main_data.insert(key.to_string(), data[key].to_string());
+
+                    //add the content-length
+                    ("content-length", Value::String(s)) => {
+                        if s.parse::<u64>().is_ok() {
+                            main_data.insert(key.to_string(), s.clone());
+                        } else {
+                            let error = "content length must be a number";
+                            errorhandler(&stream, error);
+                        }
                     }
-                    Value::String(s) if s == "360p" => {
-                        main_data.insert(key.to_string(), data[key].to_string());
+
+                    ("bitrate", _) => {
+                        errorhandler(&stream, "invalid bitrate value");
+                        return;
                     }
-                    Value::String(s) if s == "240p" => {
-                        main_data.insert(key.to_string(), data[key].to_string());
+
+                    ("url", _) => {
+                        errorhandler(&stream, "invalid url value");
+                        return;
                     }
-                    Value::String(s) if s == "144p" => {
-                        main_data.insert(key.to_string(), data[key].to_string());
+                    ("content-length", _) => {
+                        errorhandler(&stream, "invalid content-length vlaue");
                     }
-                    Value::String(s) if s.starts_with("http") => {
-                        main_data.insert(key.to_string(), data[key].to_string());
-                    }
-                    _ => {
-                        let error = String::from("invalid value");
-                        errorhandler(&stream, &error);
-                    }
+                    (_, _) => errorhandler(&stream, "invalid payload"),
                 }
             }
-
-            //fetch the data from the yt-dlp
         }
     }
 
@@ -68,6 +80,8 @@ pub fn extractor(request: Request, stream: TcpStream) {
             return;
         }
     };
+
+    //call the ytdlp_process to fetch the data
     let ytdlp_process = Command::new("yt-dlp")
         .arg("--list-formats")
         .arg(video_url)
@@ -79,6 +93,11 @@ pub fn extractor(request: Request, stream: TcpStream) {
     //fix the data to that string
     let output = String::from_utf8_lossy(&ytdlp_process.stdout);
 
-    //fetch the error
+    //get the error
     let error = String::from_utf8_lossy(&ytdlp_process.stderr);
+
+    //if the output is there then
+
+    //fetch the important code according to the
+    if !output.is_empty() {}
 }
