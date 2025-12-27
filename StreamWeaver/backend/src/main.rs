@@ -1,4 +1,5 @@
 use std::io::Read;
+
 // use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
@@ -12,6 +13,8 @@ mod controller;
 mod services;
 use routes::routes_moderator;
 use utils::Request;
+
+//main funciton that run the program
 fn main() {
     //creating a simple webserver
     let listener = TcpListener::bind("127.0.0.1:8080");
