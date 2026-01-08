@@ -1,3 +1,5 @@
+use crate::main;
+use crate::services::{code_handler, codeextractor};
 use crate::utils::{
     Request, Response, ResponseBody, errorhandler, handle_response, json_deserializer,
 };
@@ -17,7 +19,8 @@ pub async fn extractor(request: Request, stream: TcpStream) {
     let mut main_data: HashMap<String, String> = HashMap::new();
 
     // check for the keys in the data
-    let keys = ["bitrate", "url", "content-length"];
+    let keys = ["bitrate", "url", "content-length", "vcodec"];
+    let vcodec: Vec<&str> = vec!["avc1.64002a", "av01.0.09M.08"];
     if let Some(data) = iterable_data {
         //iterate the value
         for key in keys {
@@ -53,6 +56,11 @@ pub async fn extractor(request: Request, stream: TcpStream) {
                         }
                     }
 
+                    //add the video codec
+                    ("vcodec", Value::String(s)) if vcodec.contains(&s.as_str()) => {
+                        main_data.insert(key.to_string(), s.clone());
+                    }
+
                     ("bitrate", _) => {
                         errorhandler(&stream, "invalid bitrate value");
                         return;
@@ -63,7 +71,12 @@ pub async fn extractor(request: Request, stream: TcpStream) {
                         return;
                     }
                     ("content-length", _) => {
-                        errorhandler(&stream, "invalid content-length vlaue");
+                        errorhandler(&stream, "invalid content-length value");
+                    }
+
+                    ("vcodec", _) => {
+                        errorhandler(&stream, "invalid vcodec value");
+                        return;
                     }
                     (_, _) => errorhandler(&stream, "invalid payload"),
                 }
@@ -96,8 +109,43 @@ pub async fn extractor(request: Request, stream: TcpStream) {
     //get the error
     let error = String::from_utf8_lossy(&ytdlp_process.stderr);
 
-    //if the output is there then
-
     //fetch the important code according to the
-    if !output.is_empty() {}
+    if !output.is_empty() {
+        //call the codeextractor
+        //the bitrate
+        let bitrate = match main_data.get("bitrate") {
+            Some(bitrate) => bitrate,
+            None => {
+                let error = String::from("birate key is missing");
+                errorhandler(&stream, &error);
+                return;
+            }
+        };
+
+        //the vidoe codec
+        let vcodec = match main_data.get("vcodec") {
+            Some(vcodec) => vcodec,
+            None => {
+                let error = String::from("vcodec key is missing");
+                errorhandler(&stream, &error);
+                return;
+            }
+        };
+
+        //destructure the tuple
+        let (vidcode, audcode) = code_handler(&output.to_string(), bitrate, vcodec);
+
+        //fix the issue :
+        println!("vid codes: {:?}", vidcode);
+        println!("audio codes: {:?}", audcode);
+
+        //download the video using the codes
+        let downlaoder_ytdlp = Command::new("yt-dlp")
+            .arg("--list-formats")
+            .arg(video_url)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .output()
+            .expect("failed to execute the process");
+    }
 }
