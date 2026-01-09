@@ -6,6 +6,7 @@ use crate::utils::{
 use core::error;
 use serde_json::Value;
 use std::fs::create_dir_all;
+use std::io::{stderr, stdout};
 use std::process::Stdio;
 use std::{collections::HashMap, net::TcpStream, process::Command};
 
@@ -166,7 +167,97 @@ pub async fn extractor(request: Request, stream: TcpStream) {
         }
 
         if !downloader_output.is_empty() {
-            println!("downloader_output: {}", downloader_output)
+            println!("downloader_output: {}", downloader_output);
+            //output dir
+            let fileval = read_dir(video_download_folder.to_string());
+
+            //call the chunking function
+            chunk_video(fileval.expect("might not a String"), vcodec.to_string());
         }
     }
+}
+
+//function to change the video into chunks
+//the length of chunks will be specified by client
+
+fn chunk_video(video_path: String, vidcodec: String) {
+    //create the output dir
+    let vidoutput = "vidoutput";
+    std::fs::create_dir_all(vidoutput).expect("failed to create dir");
+
+    //call the ffmpeg on video
+    let options = [
+        "-preset medium",
+        "-crf 24",
+        //"-vf scale=-2:720", // Scale to 720p height, maintain aspect ratio
+        "-b:v 2500k",     // Video bitrate for 720p
+        "-maxrate 2500k", // Maximum bitrate
+        "-bufsize 5000k", // Buffer size
+        "-b:a 128k",      // Audio bitrate
+        "-ar 44100",      // Audio sample rate
+        "-start_number 0",
+        "-hls_time 4",
+        "-hls_list_size 0",
+        "-hls_playlist_type vod",
+        "-f hls",
+    ];
+
+    let mut video_chunker = Command::new("ffmpeg");
+
+    video_chunker
+        .arg("-i")
+        .arg(video_path)
+        .arg("-c:v")
+        .arg(vidcodec)
+        .arg("-c:a")
+        .arg("aac");
+    // .arg(output_options)
+    // .arg(vidoutput)
+    // .stdout(Stdio::piped())
+    // .stderr(Stdio::piped())
+    // .output()
+    // .expect("failed to run ffmped");
+
+    //iterate over the option and feed it to video_chunker
+    for option in options {
+        //individual value
+        let individual_val = option.split_whitespace();
+        video_chunker.args(individual_val);
+    }
+
+    let cmd = video_chunker
+        .arg(vidoutput)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .output()
+        .expect("failed to run ffmpeg");
+
+    println!("cmd is called ");
+    //check the output and the erorr
+    if !cmd.stdout.is_empty() {
+        println!("ffmpeg output is : {:?}", cmd.stdout)
+    }
+
+    if !cmd.stderr.is_empty() {
+        let error = String::from_utf8_lossy(&cmd.stderr);
+        for line in error.lines() {
+            println!("ffmpeg error is : {:?}", line)
+        }
+    }
+}
+
+//function to get path from folder
+fn read_dir(folder_string: String) -> std::io::Result<String> {
+    let mut fileval = String::new();
+
+    for entry in std::fs::read_dir(folder_string)? {
+        let entry = entry?; // handle Result
+        let path = entry.path();
+        if let Some(file_name) = path.file_name() {
+            println!("{}", file_name.to_string_lossy());
+            fileval = file_name.to_string_lossy().into_owned();
+        }
+    }
+
+    Ok(fileval)
 }
