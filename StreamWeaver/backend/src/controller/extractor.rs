@@ -5,6 +5,7 @@ use crate::utils::{
 };
 use core::error;
 use serde_json::Value;
+use std::fs::create_dir_all;
 use std::process::Stdio;
 use std::{collections::HashMap, net::TcpStream, process::Command};
 
@@ -135,17 +136,37 @@ pub async fn extractor(request: Request, stream: TcpStream) {
         //destructure the tuple
         let (vidcode, audcode) = code_handler(&output.to_string(), bitrate, vcodec);
 
-        //fix the issue :
-        println!("vid codes: {:?}", vidcode);
-        println!("audio codes: {:?}", audcode);
+        let combined_code = format! {"{vidcode} + {audcode}"};
+
+        let video_download_folder = "public";
+        let _ = std::fs::create_dir_all(video_download_folder);
+
+        // Define output file template
+        let output_template = format!("{}/%(title)s.%(ext)s", video_download_folder);
 
         //download the video using the codes
         let downlaoder_ytdlp = Command::new("yt-dlp")
-            .arg("--list-formats")
+            .arg("-f")
+            .arg(combined_code)
             .arg(video_url)
+            .arg("-o")
+            .arg(output_template)
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .output()
             .expect("failed to execute the process");
+
+        //get the output
+        let downloader_output = String::from_utf8_lossy(&downlaoder_ytdlp.stdout);
+
+        //get the error if any
+        let downloader_error = String::from_utf8_lossy(&downlaoder_ytdlp.stderr);
+        if !downloader_error.is_empty() {
+            println!("downloader_error: {}", downloader_error)
+        }
+
+        if !downloader_output.is_empty() {
+            println!("downloader_output: {}", downloader_output)
+        }
     }
 }
