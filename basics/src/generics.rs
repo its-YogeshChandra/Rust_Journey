@@ -40,6 +40,28 @@ pub fn get_larger<T: PartialOrd>(a: T, b: T) -> T {
     }
 }
 
+//simplified version of rust option enum
+pub enum OptionValue<T> {
+    Some(T),
+    None,
+}
+
+pub fn optionhandler() {
+    let mut values: Vec<i32> = Vec::new();
+    //create my option value
+    let x = OptionValue::Some(5);
+    let y: OptionValue<i32> = OptionValue::None;
+
+    match x {
+        OptionValue::Some(v) => {
+            println!("value is {}", v);
+            values.push(v);
+        }
+        OptionValue::None => println!("there is no value"),
+    }
+    println!("the vector is : {:?}", values);
+}
+
 //generics do the monomorphizaton converting gneric codes into specific codes,
 
 //function for explanation
