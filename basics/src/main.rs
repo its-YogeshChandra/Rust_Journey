@@ -3,7 +3,7 @@ mod lifetimes;
 mod traits;
 
 use generics::createpoint;
-use lifetimes::liftime_function;
+use lifetimes::{figure_value, liftime_function};
 use traits::{greet_person, playsound};
 
 use crate::generics::optionhandler;
@@ -18,4 +18,5 @@ fn main() {
 
     //lifetimes
     liftime_function();
+    figure_value();
 }
