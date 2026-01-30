@@ -1,7 +1,9 @@
 mod generics;
+mod lifetimes;
 mod traits;
 
 use generics::createpoint;
+use lifetimes::liftime_function;
 use traits::{greet_person, playsound};
 
 use crate::generics::optionhandler;
@@ -13,4 +15,7 @@ fn main() {
     println!("traits");
     greet_person();
     playsound();
+
+    //lifetimes
+    liftime_function();
 }
