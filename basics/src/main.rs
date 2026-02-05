@@ -3,7 +3,7 @@ mod lifetimes;
 mod smartpointers;
 mod traits;
 
-use crate::generics::optionhandler;
+use crate::{generics::optionhandler, smartpointers::regular_reference};
 use generics::createpoint;
 use lifetimes::{figure_value, illegal_move, liftime_function, static_main};
 use smartpointers::{recursive_data, smartpointer};
@@ -27,4 +27,5 @@ fn main() {
     //smartpointers
     smartpointer();
     recursive_data();
+    regular_reference();
 }

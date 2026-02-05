@@ -47,6 +47,8 @@ impl<T> Deref for MainBox<T> {
 pub fn regular_reference() {
     let x = 5;
     let y = MainBox::new(x);
+
+    //function is working fine
     assert_eq!(5, x);
     assert_eq!(5, *y);
 }
