@@ -29,16 +29,6 @@ pub fn figure_value() {
     i.announce();
 }
 
-// pub struct Container<'a> {
-//     inner: &'a str,
-// }
-//
-// pub fn illegal_move() -> Container<'static> {
-//     let val = String::from("I am temporary");
-//     let c = Container { inner: &val };
-//     c
-// }
-
 //the fix :
 #[derive(Debug)]
 pub struct Container {
