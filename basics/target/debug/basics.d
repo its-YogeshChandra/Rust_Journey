@@ -1,1 +1,1 @@
-/Users/test/Documents/Rust/basics/target/debug/basics: /Users/test/Documents/Rust/basics/src/generics.rs /Users/test/Documents/Rust/basics/src/lifetimes.rs /Users/test/Documents/Rust/basics/src/main.rs /Users/test/Documents/Rust/basics/src/traits.rs
+/Users/test/Documents/Rust/basics/target/debug/basics: /Users/test/Documents/Rust/basics/src/generics.rs /Users/test/Documents/Rust/basics/src/lifetimes.rs /Users/test/Documents/Rust/basics/src/main.rs /Users/test/Documents/Rust/basics/src/smartpointers.rs /Users/test/Documents/Rust/basics/src/traits.rs
